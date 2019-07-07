@@ -1,6 +1,6 @@
 version: 2.1
 jobs:
-  build:
+  build-win-linux:
     docker:
       - image: electronuserland/builder:wine
     working_directory: ~/epona
@@ -38,6 +38,44 @@ jobs:
             - output
       - store_artifacts:
           path: ~/output
+  build_macos:
+    macos:
+      xcode: "10.0.0"
+    working_directory: ~/epona
+    steps:
+      - checkout
+      - run:
+          name: Install Dependencies
+          command: |
+            yarn install
+      - run:
+          name: Create build
+          command: |
+            yarn build
+      - run:
+          name: Build Installers
+          command: |
+            yarn dist-mac
+      - save_cache:
+          paths:
+            - node_modules
+          key: v1-dependencies-{{ checksum "package.json" }}
+      - run:
+          name: Collect Artifacts
+          command: |
+            VERSION=v$(node -p "require('./package.json').version")
+            if [ "${CIRCLE_TAG}" != "" ]; then
+                VERSION=${CIRCLE_TAG}
+            fi
+            OUT=~/output
+            mkdir -p ${OUT}
+            mv ~/epona/dist/Epona-${VERSION}.{dmg} ${OUT}/
+      - persist_to_workspace:
+          root: ~/
+          paths:
+            - output
+      - store_artifacts:
+          path: ~/output
   release:
     docker:
       - image: cibuilds/github:0.10
@@ -54,7 +92,13 @@ workflows:
   version: 2
   epona-desktop:
     jobs:
-      - build:
+      - build-win-linux:
+          filters:
+            branches:
+              only: master
+            tags:
+              only: /.*/
+      - build_macos:
           filters:
             branches:
               only: master
@@ -62,7 +106,7 @@ workflows:
               only: /.*/
       - release:
           requires:
-            - build
+            - build-win-linux
           filters:
             branches:
               only: master
