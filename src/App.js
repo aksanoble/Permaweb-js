@@ -12,8 +12,6 @@ import keymap from './keymap'
 // @ts-ignore
 import { ShortcutManager } from 'react-shortcuts'
 
-//Test commit to test release
-
 @inject('store') @observer
 class App extends Component {
   static childContextTypes = {
