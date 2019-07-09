@@ -53,6 +53,10 @@ jobs:
           command: |
             yarn build
       - run:
+          name: Link SSL
+          command: |
+            ln -s ../opt/openssl/include/openssl .
+      - run:
           name: Build Installers
           command: |
             yarn dist-mac
