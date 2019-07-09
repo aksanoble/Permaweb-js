@@ -73,7 +73,7 @@ jobs:
             fi
             OUT=~/output
             mkdir -p ${OUT}
-            mv ~/epona/dist/Epona-${VERSION}.{dmg} ${OUT}/
+            mv ~/epona/dist/Epona-${VERSION}.dmg ${OUT}/
       - persist_to_workspace:
           root: ~/
           paths:
