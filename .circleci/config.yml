@@ -55,7 +55,7 @@ jobs:
       - run:
           name: Link SSL
           command: |
-            ln -s ../opt/openssl/include/openssl .
+            ln -s /usr/local/opt/openssl/include/openssl/ /usr/local/include/
       - run:
           name: Build Installers
           command: |
